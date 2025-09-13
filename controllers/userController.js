@@ -29,14 +29,15 @@ const loginUser = async(request, response) => {
     try{
         const email = request.body.email;
         const password = request.body.password;
-
+        
         const user = await User.findOne({email:email});
+
         if(user.length == 0){
             response.status(404).json({message: "user not found"});
         }else{
             const comparePassword = await bcrypt.compare(password, user.password);
             if(comparePassword){
-                const token = generateToken(user.email);
+                const token = await generateToken(user.email);
                 response.status(200).json({access_token: token});
             }else{
                 response.status(401).json({message: "incorrect password"});
