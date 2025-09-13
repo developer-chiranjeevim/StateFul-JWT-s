@@ -1,5 +1,7 @@
 import bcrypt from "bcrypt";
 import User from "../models/userModel.js";
+import { generateToken } from "../utilities/token.js";
+
 
 const createUser = async(request, response) => {
 
@@ -34,7 +36,8 @@ const loginUser = async(request, response) => {
         }else{
             const comparePassword = await bcrypt.compare(password, user.password);
             if(comparePassword){
-                response.status(200).json(user);
+                const token = generateToken(user.email);
+                response.status(200).json({access_token: token});
             }else{
                 response.status(401).json({message: "incorrect password"});
             };
